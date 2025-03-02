@@ -10,7 +10,9 @@ phases:
 artifacts:
   base-directory: .
   files:
-    - "**/*"
+    - "index.js"
+    - "package.json"
+    - "node_modules/**/*"
   discard-paths: no
   exclude-files:
     - "**/test/**"

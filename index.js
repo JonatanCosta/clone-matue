@@ -2,13 +2,11 @@ const Alexa = require('ask-sdk-core');
 const AWS = require('aws-sdk');
 const fetch = require('node-fetch');
 const { v4: uuidv4 } = require('uuid');
-const { PassThrough } = require('stream');
-const ffmpeg = require('fluent-ffmpeg');
-const ffmpegStatic = require('ffmpeg-static');
-const ffprobeStatic = require('ffprobe-static');
 
-ffmpeg.setFfmpegPath(ffmpegStatic.path);
-ffmpeg.setFfprobePath(ffprobeStatic.path);
+const { spawn } = require('child_process');
+const { PassThrough } = require('stream');
+const ffmpegPath = require('ffmpeg-static');
+
 
 /**
  * Função para reencodar o áudio usando fluent-ffmpeg
@@ -21,33 +19,33 @@ function reencodeAudio(inputBuffer) {
         const passIn = new PassThrough();
         passIn.end(inputBuffer);
 
-        // Cria um outro PassThrough para receber a saída do ffmpeg
-        const passOut = new PassThrough();
-        const chunks = [];
+        // Cria um array para coletar os dados da saída
+        const outputChunks = [];
 
-        // Coletar dados do output do ffmpeg
-        passOut.on('data', (chunk) => {
-            chunks.push(chunk);
+        // Inicia o processo FFmpeg com os parâmetros desejados
+        const ffmpegProcess = spawn(ffmpegPath, [
+            '-f', 'mp3',      // formato de entrada
+            '-i', 'pipe:0',   // ler da entrada padrão
+            '-b:a', '48k',    // bitrate de áudio: 48kbps
+            '-ar', '22050',   // sample rate: 22050 Hz
+            '-f', 'mp3',      // formato de saída
+            'pipe:1'          // enviar a saída para a saída padrão
+        ]);
+
+        ffmpegProcess.stdout.on('data', (chunk) => {
+            outputChunks.push(chunk);
         });
-        passOut.on('end', () => {
-            resolve(Buffer.concat(chunks));
+
+        ffmpegProcess.stdout.on('end', () => {
+            resolve(Buffer.concat(outputChunks));
         });
-        passOut.on('error', (err) => {
+
+        ffmpegProcess.on('error', (err) => {
             reject(err);
         });
 
-        // Configura o ffmpeg para ler do passIn (formato MP3),
-        // reduzir bitrate para 48kbps e sample rate 22050
-        ffmpeg(passIn)
-            .inputFormat('mp3')
-            .audioBitrate('48k')
-            .audioFrequency(22050)
-            .format('mp3')
-            .on('error', (err) => {
-                reject(err);
-            })
-            // Direciona a saída para passOut
-            .pipe(passOut, { end: true });
+        // Encaminha o inputBuffer para o ffmpeg
+        passIn.pipe(ffmpegProcess.stdin);
     });
 }
 
