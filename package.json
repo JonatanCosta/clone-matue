@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Alexa skill GPT-4 + ElevenLabs do Matuê",
   "main": "index.js",
+  "type": "commonjs",
   "scripts": {
     "test": "echo \"No test specified\" && exit 1"
   },
