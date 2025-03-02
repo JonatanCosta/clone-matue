@@ -157,7 +157,7 @@ const ChatIntentHandler = {
             console.log("Áudio gerado pela ElevenLabs com sucesso!");
 
             // 2.1. Reencodar para garantir compatibilidade com Alexa (48 kbps, 22050 Hz)
-            const reencodedBuffer = await reencodeAudio(audioBuffer);
+            //const reencodedBuffer = await reencodeAudio(audioBuffer);
 
             console.log("Gerou o reencodedBuffer");
 
@@ -167,7 +167,7 @@ const ChatIntentHandler = {
             await s3.putObject({
                 Bucket: BUCKET_NAME,
                 Key: audioKey,
-                Body: reencodedBuffer,
+                Body: audioBuffer,
                 ContentType: "audio/mpeg",
                 ACL: "public-read"
             }).promise();
