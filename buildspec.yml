@@ -1,0 +1,17 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - npm install
+  build:
+    commands:
+      # Se houver um passo de build (ex: TypeScript), coloque aqui
+      - echo "Build step (opcional) finalizado."
+  post_build:
+    commands:
+      # Empacota tudo em um zip
+      - zip -r lambda-package.zip .
+artifacts:
+  files:
+    - lambda-package.zip
