@@ -118,6 +118,9 @@ const ChatIntentHandler = {
 
             console.log("Resposta do OpenAI:", botReply);
 
+            console.log("Iniciando chamada à ElevenLabs", ELEVENLABS_API_KEY);
+
+
             // 2. Chamada ao ElevenLabs para gerar o MP3 (como buffer)
             const ttsResponse = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICE_ID}?output_format=mp3_22050_32`, {
                 method: "POST",
@@ -145,6 +148,8 @@ const ChatIntentHandler = {
                     .speak("Desculpe, ocorreu um erro ao gerar o áudio.")
                     .getResponse();
             }
+
+            console.log("Chamada à ElevenLabs concluída");
 
             // buffer do MP3 gerado pela ElevenLabs
             const audioBuffer = await ttsResponse.buffer();
@@ -256,7 +261,7 @@ const ErrorHandler = {
         return true;
     },
     handle(handlerInput, error) {
-        console.error("Erro capturado:", JSON.stringify(error, null, 2));
+        console.error("Erro capturado:", error);
         const speakOutput = 'Desculpe, ocorreu um erro. Por favor, tente novamente.';
         return handlerInput.responseBuilder
             .speak(speakOutput)
@@ -276,3 +281,5 @@ exports.handler = Alexa.SkillBuilders.custom()
     )
     .addErrorHandlers(ErrorHandler)
     .lambda();
+
+console.log("Evento recebido:", JSON.stringify({/* seu exemplo de payload */}, null, 2));
