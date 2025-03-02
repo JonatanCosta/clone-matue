@@ -13,5 +13,8 @@ phases:
       # Empacota tudo em um zip
       - zip -r lambda-package.zip index.js node_modules package.json
 artifacts:
+  base-directory: .
   files:
-    - lambda-package.zip
+    - index.js
+    - package.json
+    - node_modules/**
