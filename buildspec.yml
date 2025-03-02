@@ -3,7 +3,7 @@ version: 0.2
 phases:
   install:
     commands:
-      - npm install
+      - npm install --production
   build:
     commands:
       - echo "Build step (opcional) finalizado."
@@ -12,3 +12,8 @@ artifacts:
   files:
     - "**/*"
   discard-paths: no
+  exclude-files:
+    - "**/test/**"
+    - "**/tests/**"
+    - "**/*.md"
+    - "**/.git/**"
