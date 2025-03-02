@@ -11,7 +11,7 @@ phases:
   post_build:
     commands:
       # Empacota tudo em um zip
-      - zip -r lambda-package.zip .
+      - zip -r lambda-package.zip index.js node_modules package.json
 artifacts:
   files:
     - lambda-package.zip
