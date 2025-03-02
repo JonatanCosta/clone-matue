@@ -92,6 +92,8 @@ const ChatIntentHandler = {
         // Extrai o texto do usuário (slot "query")
         const query = Alexa.getSlotValue(handlerInput.requestEnvelope, 'query') || '';
 
+        console.log("Slot 'query':", query);
+
         try {
             // 1. Chamada ao OpenAI para obter resposta no estilo Matuê
             const openaiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -113,6 +115,8 @@ const ChatIntentHandler = {
             });
             const openaiData = await openaiResponse.json();
             const botReply = openaiData.choices[0].message.content;
+
+            console.log("Resposta do OpenAI:", botReply);
 
             // 2. Chamada ao ElevenLabs para gerar o MP3 (como buffer)
             const ttsResponse = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICE_ID}?output_format=mp3_22050_32`, {
@@ -145,8 +149,13 @@ const ChatIntentHandler = {
             // buffer do MP3 gerado pela ElevenLabs
             const audioBuffer = await ttsResponse.buffer();
 
+            console.log("Áudio gerado pela ElevenLabs com sucesso!");
+
             // 2.1. Reencodar para garantir compatibilidade com Alexa (48 kbps, 22050 Hz)
             const reencodedBuffer = await reencodeAudio(audioBuffer);
+
+            console.log("Gerou o reencodedBuffer");
+
 
             // 3. Subir o arquivo no S3 com um nome único (UUID)
             const audioKey = `matue-tts/tts/${uuidv4()}.mp3`;
@@ -247,9 +256,8 @@ const ErrorHandler = {
         return true;
     },
     handle(handlerInput, error) {
-        console.error(`Erro capturado: ${error.message}`);
+        console.error("Erro capturado:", JSON.stringify(error, null, 2));
         const speakOutput = 'Desculpe, ocorreu um erro. Por favor, tente novamente.';
-
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .reprompt(speakOutput)
