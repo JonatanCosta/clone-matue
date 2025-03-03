@@ -57,9 +57,7 @@ const BUCKET_NAME = process.env.BUCKET_NAME;
 
 // Configuração do S3
 const s3 = new AWS.S3({
-    region: "sa-east-1",
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+    region: "sa-east-1"
 });
 
 /**
