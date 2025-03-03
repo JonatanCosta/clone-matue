@@ -178,7 +178,6 @@ const ChatIntentHandler = {
             // 5. Montar SSML para Alexa reproduzir o áudio
             const speechOutput = `
                 <speak>
-                    Resposta do Matue:
                     <audio src="${audioURL}" />
                 </speak>
             `;
