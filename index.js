@@ -69,7 +69,7 @@ const LaunchRequestHandler = {
         const speakOutput = `<speak><audio src="${welcomeAudioUrl}"/></speak>`;
         return handlerInput.responseBuilder
             .speak(speakOutput)
-            .reprompt('Qual é a boa?')
+            .reprompt(`<speak>Qual é a boa?</speak>`)
             .withShouldEndSession(false)  // Mantém a sessão ativa
             .getResponse();
     }
